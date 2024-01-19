@@ -27,14 +27,15 @@ function Voting({onNextStep}) {
 
   return (
     <div className='VotingContainer'>
-      <h1 className='GameText'>VOTING</h1>
+      <h1 className='VoteText'>VOTING</h1>
         <div className="Board">
               {board.map((word, index) => (
               <div key={index} className="BoardWord">
               {word} </div>
               ))}
           </div>
-          <p>{voted ? `You voted for ${myVote}` : "Vote out the Woolf!"}</p>
+          <p className='VoteIndicator'>{voted ? `You voted for ${myVote}` : "Vote out the Woolf!"}</p>
+          <hr className='Divider'></hr>
             <ul className='ClueList'> {cluesList.map((submittedClue, index) => (
                 <li key={index}>
                   {submittedClue}

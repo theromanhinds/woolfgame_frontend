@@ -23,6 +23,20 @@
   flex-direction: column;
 }
 
+.StartLogo {
+  width: 30%;
+  position: fixed;
+  top: 3%;
+
+  @media only screen and (max-width: 768px) {
+      width: 50%;
+  }
+}
+
+.StartText {
+  font-style: italic;
+}
+
 .Container {
   width: 100%;
   height: 60%;
@@ -33,47 +47,82 @@
   justify-content: center;
 }
 
-.StartText {
+.StartInput {
+  width:200px;
+  padding:10px;
+  font-size: 1.5em;
+  border: none;
+  background-color: #F7F3F0;
+  border-bottom: 3px solid black;
+  outline: none;
+  text-align: center;
+
+}
+
+.NameText {
+  position: fixed;
+  top: 36%;
   font-style: italic;
 }
 
-.StartInput {
-  width:200px;
-  padding:20px;
-  font-size: 1.5em;
-}
-
 .StartButton {
+  position: fixed;
+  background-color: #F7F3F0;
+  bottom: 10%;
   font-style: italic;
   font-weight: bold;
   width: auto;
   padding: 1em;
-  border-radius: 5%;
   font-size: 1.5em;
-
-  margin-top: 20px;
 }
 
-.StartLogo {
-  width: 25%;
+.CreateButton {
   position: fixed;
-  top: 3%;
+  background-color: #F7F3F0;
+  bottom: 45%;
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 1em;
+  font-size: 1.5em;
 }
+
+.JoinButton {
+  position: fixed;
+  background-color: #F7F3F0;
+  bottom: 33%;
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 1em;
+  font-size: 1.5em;
+}
+
+
 
 /*////////////////////////////*/
 
 .GameLogo {
-  width: 25%;
+
+  width: 10%;
   position: fixed;
-  top: 4%;
-  left: 4%;
+  top: 2%;
+  left: 2%;
+
+  @media only screen and (max-width: 768px) {
+      width: 35%;
+      top: 2%;
+      left: 4%;
+  }
+
 }
 
 .GameInfoContainer {
   font-style: italic;
+  line-height: 1em;
   width: 35%;
   position: fixed;
-  top: 4%;
+  top: 2%;
   right: 4%;
   text-align: right;
 }
@@ -83,22 +132,52 @@
   font-weight: bold;
   width: auto;
   padding: 1em;
-  border-radius: 5%;
   font-size: 1.5em;
+  position: fixed;
+  background-color: #F7F3F0;
+  bottom: 10%;
+}
 
-  margin-top: 20px;
+.LobbyButton {
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 1em;
+  font-size: 1.5em;
+  position: fixed;
+  background-color: #F7F3F0;
+  bottom: 10%;
 }
 
 .GameText {
   font-style: italic;
 }
 
+.LobbyText {
+  font-style: italic;
+  position: fixed;
+  top: 20%;
+}
+
+.LobbyContainer {
+  width: 100%;
+  height: 60%;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .PlayerList {
+
+  text-align: center;
   list-style-position: outside;
-  list-style-type: none;
-  padding-right: 10%;
+  list-style-type: square;
   font-size: large;
 }
+
+/*//////////////*/
 
 .Game {
   position: relative;
@@ -142,12 +221,59 @@
   justify-content: top;
 }
 
+.Board {
+  position: fixed;
+  top: 28%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.BoardWord {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.VoteText {
+  font-style: italic;
+  position: fixed;
+  top: 15%;
+}
+
+.TopicText {
+  font-style: italic;
+  position: fixed;
+  top: 15%;
+}
+
+.RoleText {
+  font-style: italic;
+  position: fixed;
+  top: 20%;
+}
+
+.Divider {
+  height: 1px;
+  width: 300px;
+  position: fixed;
+  top: 48%;
+  background-color: black;
+  border: none;
+}
+
 .ClueBoxContainer {
   font-style: italic;
   width: 90%;
+  height: 48%;
   position: fixed;
-  bottom: 4%;
+  bottom: 3%;
   text-align: right;
+}
+
+.ClueText {
+  position: fixed;
+  top: 48%;
 }
 
 .ClueBox {
@@ -160,12 +286,19 @@
 }
 
 .ClueInput {
-  width:200px;
+  width:220px;
   padding:8px;
   font-size: 1.5em;
+  border: none;
+  background-color: #F7F3F0;
+  border-bottom: 3px solid black;
+  outline: none;
+  text-align: center;
 }
 
 .ClueSubmitContainer {
+  position: fixed;
+  bottom: 4%;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -174,33 +307,36 @@
 }
 
 .ClueSubmit {
-  margin-left: 5%;
+  margin-left: 3%;
   font-style: italic;
   font-weight: bold;
   width: auto;
   padding: 0.5em;
-  border-radius: 5%;
   font-size: 1em;
+  background-color: #F7F3F0;
 }
 
 .ClueList {
-  list-style-position: outside;
-  padding-right: 10%;
-  font-size: large;
-  width: 80%;
-}
-
-.Board {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.BoardWord {
-  border: 1px solid #ccc;
-  padding: 10px;
+  width: 50%;
   text-align: center;
+  list-style-position: outside;
+  list-style-type: square;
+  font-size: large;
+  position: fixed;
+  bottom: 36%;
 }
+
+.TurnIndicator {
+  position: fixed;
+  top: 54%;
+}
+
+.VoteIndicator {
+  position: fixed;
+  top: 49%;
+}
+
+
 
 .VotingContainer {
   width: 100%;
@@ -217,6 +353,7 @@
 .VoteButton {
   margin-left: 5%;
   font-style: italic;
+  background-color: #F7F3F0;
   font-weight: bold;
   width: auto;
   padding: 0.5em;
@@ -227,9 +364,9 @@
 .ReadyButton {
   font-style: italic;
   font-weight: bold;
+  background-color: #F7F3F0;
   width: auto;
   padding: 1em;
-  border-radius: 5%;
   font-size: 1.5em;
 
   margin-top: 20px;

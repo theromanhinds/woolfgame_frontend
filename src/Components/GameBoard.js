@@ -17,14 +17,15 @@ function GameBoard({handleNextStep}) {
  
   return (
     <div className='BoardContainer'>
-      <h2 className='GameText'>TOPIC: {topic}</h2>
-        <h3 className='GameText'>Role: {role} / Answer: {role === 'WOOLF' ? '???' : answer}</h3>
+      <h2 className='TopicText'>TOPIC: {topic}</h2>
+        <h3 className='RoleText'>Role: {role} / Answer: {role === 'WOOLF' ? '???' : answer}</h3>
         <div className="Board">
             {board.map((word, index) => (
             <div key={index} className="BoardWord">
             {word} </div>
             ))}
         </div>
+        <hr className='Divider'></hr>
         <ClueBox onNextStep={handleNextStep}/>
     </div>
   )

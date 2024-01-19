@@ -28,7 +28,7 @@ function Answer({resetStep}) {
         <h1 className='GameText'>RESULTS</h1>
         <h3 className='GameText'>MOST VOTED: {mostVoted}</h3>
         <h3 className='GameText'>WOOLF: {woolf}</h3>
-        <h3 className='GameText'>ANWER: {answer}</h3>
+        <h3 className='GameText'>ANSWER: {answer}</h3>
         <button className='ReadyButton' disabled={ready} onClick={handleReadyButtonClick}>RESTART</button>
     </div>
   )

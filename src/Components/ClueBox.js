@@ -76,8 +76,8 @@ function ClueBox({onNextStep}) {
     <div className='ClueBoxContainer'>
         <div className='ClueBox'>
         
-        <h2 className='BoardText'>CLUES</h2>
-        <p>{yourTurn ? "It's YOUR turn!" : "It's NOT your turn!"}</p>
+        <h2 className='ClueText'>CLUES</h2>
+        <p className='TurnIndicator'>{yourTurn ? "It's YOUR turn!" : "It's NOT your turn!"}</p>
             <ul> {cluesList.map((submittedClue, index) => (
                 <li key={index}>{submittedClue}</li>
                 ))}

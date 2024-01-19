@@ -12,9 +12,9 @@ function CreateJoin({onNextStep}) {
 
   return (
     <div className='Container'>
-        <h3 className='StartText'>WELCOME: {userName}!</h3>
-        <button className='StartButton' onClick={handleCreateButtonClick}>Create Game</button>
-        <button className='StartButton' onClick={handleJoinButtonClick}>Join Game</button>
+        <h2 className='NameText'>WELCOME: {userName}!</h2>
+        <button className='CreateButton' onClick={handleCreateButtonClick}>CREATE GAME</button>
+        <button className='JoinButton' onClick={handleJoinButtonClick}>JOIN GAME</button>
     </div>
   )
 }
