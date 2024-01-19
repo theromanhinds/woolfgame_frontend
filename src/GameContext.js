@@ -20,7 +20,9 @@ export const GameProvider = ({ children }) => {
   const handleConnect = () => {
     return new Promise((resolve, reject) => {
       try {
-        const newSocket = io('https://woolf-game-test-b5725a7e8c1f.herokuapp.com/');
+        const newSocket = io('https://woolf-game-test-b5725a7e8c1f.herokuapp.com/', {
+          withCredentials: true,
+        });
 
         // Listen for successful connection
         newSocket.on('connect', () => {
