@@ -10,7 +10,7 @@ function Lobby({onNextStep}) {
     const handleStartButtonClick = () => {
 
         //RESET TO 3
-        if (lobby.length >= 1){
+        if (lobby.length >= 3){
             handleGameStartRequest();
         } else {
             alert("Need atleast 3 players");
