@@ -1,38 +1,236 @@
 .App {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #F7F3F0;
+  overflow: hidden;
+}
+
+/*////////////////////////////*/
+
+.StartContainer {
+  width: 80%;
+  height: 80%;
+
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+.Container {
+  width: 100%;
+  height: 60%;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.StartText {
+  font-style: italic;
+}
+
+.StartInput {
+  width:200px;
+  padding:20px;
+  font-size: 1.5em;
+}
+
+.StartButton {
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 1em;
+  border-radius: 5%;
+  font-size: 1.5em;
+
+  margin-top: 20px;
+}
+
+.StartLogo {
+  width: 25%;
+  position: fixed;
+  top: 3%;
+}
+
+/*////////////////////////////*/
+
+.GameLogo {
+  width: 25%;
+  position: fixed;
+  top: 4%;
+  left: 4%;
+}
+
+.GameInfoContainer {
+  font-style: italic;
+  width: 35%;
+  position: fixed;
+  top: 4%;
+  right: 4%;
+  text-align: right;
+}
+
+.GameButton {
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 1em;
+  border-radius: 5%;
+  font-size: 1.5em;
+
+  margin-top: 20px;
+}
+
+.GameText {
+  font-style: italic;
+}
+
+.PlayerList {
+  list-style-position: outside;
+  list-style-type: none;
+  padding-right: 10%;
+  font-size: large;
+}
+
+.Game {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.GameContainer {
+  width: 80%;
+  height: 80%;
+
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+.Container {
+  width: 100%;
+  height: 60%;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+.BoardContainer {
+  width: 100%;
+  height: 70%;
+  
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+}
+
+.ClueBoxContainer {
+  font-style: italic;
+  width: 90%;
+  position: fixed;
+  bottom: 4%;
+  text-align: right;
+}
+
+.ClueBox {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.ClueInput {
+  width:200px;
+  padding:8px;
+  font-size: 1.5em;
+}
+
+.ClueSubmitContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.ClueSubmit {
+  margin-left: 5%;
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 0.5em;
+  border-radius: 5%;
+  font-size: 1em;
+}
+
+.ClueList {
+  list-style-position: outside;
+  padding-right: 10%;
+  font-size: large;
+  width: 80%;
+}
+
+.Board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.BoardWord {
+  border: 1px solid #ccc;
+  padding: 10px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.VotingContainer {
+  width: 100%;
+  height: 70%;
+  
+  text-align: center;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: top;
+
 }
 
-.App-link {
-  color: #61dafb;
+.VoteButton {
+  margin-left: 5%;
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 0.5em;
+  border-radius: 5%;
+  font-size: 1em;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ReadyButton {
+  font-style: italic;
+  font-weight: bold;
+  width: auto;
+  padding: 1em;
+  border-radius: 5%;
+  font-size: 1.5em;
+
+  margin-top: 20px;
 }
