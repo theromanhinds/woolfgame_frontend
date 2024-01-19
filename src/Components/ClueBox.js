@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 function ClueBox({onNextStep}) {
 
-    const { socket, clue, cluesList, handleSetClue, handleClueSubmit, handleNewClue, resetClue, yourTurn, nextTurn, turnNumber, checkTurn } = useGameContext();
+    const { socket, clue, cluesList, handleSetClue, handleClueSubmit, handleNewClue, resetClue, yourTurn, turnNumber, handleSetTurnNumber, checkTurn } = useGameContext();
 
     const handleClueChange = (event) => { handleSetClue(event.target.value); };
 
@@ -18,20 +18,36 @@ function ClueBox({onNextStep}) {
         }
     }
 
-    //check for your turn at start of game
+    // //check for your turn at start of game
     useEffect(() => {
-        console.log("checking if it's your turn");
         checkTurn(turnNumber);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        // Subscribe to socket events
+          socket.on('updateTurn', (newTurnNumber) => {
+            console.log("setting turn num: ", newTurnNumber);
+            handleSetTurnNumber(newTurnNumber);
+            checkTurn(newTurnNumber);
+          });
+        
+        // Clean up subscriptions on component unmount
+        return () => {
+            socket.off('updateTurn');
+        };
+        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+    
     
     //only called for receivers of a clue
     useEffect(() => {
-
-        socket.on('newClue', (newClue) => { 
+        socket.on('newClue', (newClue) => {
+            console.log("new clue rec"); 
             handleNewClue(newClue);
-            nextTurn(); 
+            // nextTurn(); 
         });
 
         return () => {
@@ -39,18 +55,21 @@ function ClueBox({onNextStep}) {
         };
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
+      }, [socket, handleNewClue]);
 
       useEffect(() => {
         
         socket.on('startVoting', () => {
+            console.log("starting the voting");
             onNextStep();
          });
                            
         return () => {
           socket.off('startVoting');  
         };
-      });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
 
 
   return (

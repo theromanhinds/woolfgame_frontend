@@ -5,18 +5,30 @@ import { useGameContext } from '../GameContext';
 
 function Lobby({onNextStep}) {
 
-    const { socket, lobby, handleSetLobby, isHost, handleSetIsHost, handleGameStartRequest, handleGameStarted } = useGameContext();
+    const { socket, roomID, lobby, handleSetLobby, isHost, handleSetIsHost, handleGameStartRequest, handleGameStarted } = useGameContext();
 
     const handleStartButtonClick = () => {
 
         //RESET TO 3
-        if (lobby.length >= 1){
+        if (lobby.length >= 3){
             handleGameStartRequest();
         } else {
+            alert("Need atleast 3 players");
             console.log("not enough players to start");
         }
 
-    }
+    }  
+
+    useEffect(() => {
+      socket.emit('getRoom', roomID);
+    
+      return () => {
+        socket.off('getRoom');
+      }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    
 
     //GET LOBBY TO UPDATE
     // Listen for updates to the lobby
@@ -40,7 +52,7 @@ function Lobby({onNextStep}) {
         }
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
+      }, [lobby]);
 
       // Listen for game start
     useEffect(() => {

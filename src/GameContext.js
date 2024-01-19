@@ -6,16 +6,52 @@ const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
 
-  const [socket, setSocket] = useState(null);
-
   const navigate = useNavigate();
 
-  const [userName, setUserName] = useState('');
-  const handleNameUpdate = (newName) => {
-    setUserName(newName);
-  }
+  // STATE VARIABLES //////////////////////////
+  const [socket, setSocket] = useState(null);
 
+  const [userName, setUserName] = useState('');
   const [roomID, setRoomID] = useState('');
+  const [role, setRole] = useState('');
+  const [woolf, setWoolf] = useState('');
+  const [topic, setTopic] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [clue, setClue] = useState('');
+  const [myVote, setMyVote] = useState('');
+  const [mostVoted, setMostVoted] = useState('');
+
+  const [turnNumber, setTurnNumber] = useState(0);
+
+  const [isHost, setIsHost] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [yourTurn, setYourTurn] = useState(false);
+  const [voted, setVoted] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  const [lobby, setLobby] = useState([]);
+  const [board, setBoard] = useState([]);
+  const [order, setOrder] = useState([]);
+  const [cluesList, setCluesList] = useState([]);
+
+  // STATE HANDLERS //////////////////////////
+  const handleNameUpdate = (newName) => { setUserName(newName); };
+  const handleEnterRoomID = (newRoomID) => { setRoomID(newRoomID); };
+
+  const handleSetIsHost = (boolean) => { setIsHost(boolean); };
+  const handleSetLobby = (newLobby) => { setLobby(newLobby); };
+
+  const handleSetTurnNumber = (newTurnNumber) => { setTurnNumber(newTurnNumber) };
+  const handleSetYourTurn = (boolean) => { setYourTurn(boolean); };
+
+  const handleSetClue = (newClue) => { setClue(newClue); };
+  const handleNewClue = (newClue) => { setCluesList((prevClues) => [...prevClues, newClue]); };
+  const resetClue = () => { setClue(''); };
+
+  const handleSetMostVoted = (mostVoted) => { setMostVoted(mostVoted); };
+
+  // SOCKET HANDLERS //////////////////////////
+  const handleGameStartRequest = () => { socket.emit('startGame', roomID); };
   
   const handleConnect = () => {
     return new Promise((resolve, reject) => {
@@ -44,6 +80,7 @@ export const GameProvider = ({ children }) => {
     });
   };
 
+  // HANDLE CREATE OR JOIN ROOM //////////////////////////
   const handleCreateRoom = async () => {
     
     try {
@@ -70,8 +107,6 @@ export const GameProvider = ({ children }) => {
       alert('Error connecting to server!');
     }
   };
-
-  const handleEnterRoomID = (newRoomID) => { setRoomID(newRoomID); };
 
   const handleJoinRoom = async () => {
 
@@ -110,28 +145,7 @@ export const GameProvider = ({ children }) => {
     
   };
 
-  const [isHost, setIsHost] = useState(false);
-  const handleSetIsHost = (boolean) => {
-    setIsHost(boolean);
-  }
-
-  const [lobby, setLobby] = useState([]);
-  const handleSetLobby = (newLobby) => {
-    setLobby(newLobby);
-  }
-
-  const handleGameStartRequest = () => {
-    socket.emit('startGame', roomID);
-  }
-
-  const [gameStarted, setGameStarted] = useState(false);
-
-  const [role, setRole] = useState('');
-
-  const [woolf, setWoolf] = useState('');
-
-  const [board, setBoard] = useState([]);
-
+  // HANDLE GAME START //////////////////////////
   const handleGameStarted = (newGameData) => {
 
     setGameStarted(true);
@@ -151,117 +165,57 @@ export const GameProvider = ({ children }) => {
 
   };
 
-  const [topic, setTopic] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [order, setOrder] = useState([]);
-
-  const resetClue = () => {
-    setClue('');
-  }
-
-  const [clue, setClue] = useState('');
-  const handleSetClue = (newClue) => {
-    setClue(newClue);
-  }
-
-  const [cluesList, setCluesList] = useState([]);
-
+  
+  // HANDLE CLUE SUBMIT //////////////////////////
   const handleClueSubmit = (clue) => {
-
     let submission = `${userName} says: ${clue}`;
-
     socket.emit("clueSubmitted", submission, roomID);
-    setCluesList((prevClues) => [...prevClues, submission]);
-    nextTurn(); //only called for sender
+    nextTurn();
   };
 
-  const handleNewClue = (newClue) => {
-    setCluesList((prevClues) => [...prevClues, newClue]);
-  }
+  // HANDLE TURN UPDATES //////////////////////////
 
-  const [yourTurn, setYourTurn] = useState(false);
-  const handleSetYourTurn = (boolean) => {
-    setYourTurn(boolean);
-  }
+  const nextTurn = () => {
+    // Increment turn number and emit the update to all clients
+    const newTurnNumber = turnNumber + 1;
 
-  const [turnNumber, setTurnNumber] = useState(0);
+    if (newTurnNumber === order.length) {
+      console.log("game over");
+      socket.emit('allTurnsComplete', roomID);
+    } else {
+      console.log("game NOT over");
+      socket.emit('incrementTurn', newTurnNumber, roomID);
+      setTurnNumber(newTurnNumber);
+      checkTurn(newTurnNumber);
+    }
+
+  };
 
   const checkTurn = (turnCount) => {
-      console.log("current turn is: ", turnCount);
       if (socket.id === order[turnCount].id) {
         console.log("it is your turn");
         handleSetYourTurn(true);
       } else {
-        console.log("it is NOT your turn");
+        console.log("it's NOT your turn");
         handleSetYourTurn(false);
       }
-    
   };
   
-  const nextTurn = async () => {
-    try {
-      // Use a separate function to handle logic after state update
-      const handleTurnChange = async (newCount) => {
-        console.log("count before emitting: ", newCount);
+  // HANDLE VOTE //////////////////////////
   
-        const response = await new Promise((resolve, reject) => {
-          socket.emit('checkTurnsComplete', order, newCount, roomID, (exists) => {
-            resolve(exists);
-          });
-        });
-  
-        if (response) {
-          console.log("all turns complete");
-          socket.emit('allTurnsComplete', roomID);
-        } else {
-          console.log("turns not complete");
-          console.log("new Count: ", newCount);
-          checkTurn(newCount);
-        }
-      };
-  
-      // Use setTurnNumber to update state and wait for the result
-      // await setTurnNumber((prevCount) => {
-      //   console.log("prev Count: ", prevCount);
-      //   return prevCount + 1;
-      // });
-
-      setTurnNumber(turnNumber + 1);
-  
-      // Get the updated turn count after the state is updated
-      const newCount = turnNumber + 1;
-      console.log("new turn num: ", newCount);
-  
-      // Call the separate function with the updated count
-      await handleTurnChange(newCount);
-    } catch (error) {
-      console.error('Error checking if game over:', error);
-    }
-  };
-
-  const [voted, setVoted] = useState(false);
-
-  const [myVote, setMyVote] = useState('');
-
   const handleVoted = (vote) => {
     socket.emit('playerVoted', roomID, vote, order);
     setVoted(true);
     setMyVote(vote);
   }
-
-  const [mostVoted, setMostVoted] = useState('');
   
-  const handleSetMostVoted = (mostVoted) => {
-    setMostVoted(mostVoted);
-  }
-
-  const [ready, setReady] = useState(false);
-
+  // HANDLE READY //////////////////////////
   const handleReady = () => {
     setReady(true);
     socket.emit('playerReady', roomID, userName, order);
   }
 
+  // HANDLE RESET //////////////////////////
   const resetGame = () => {
     
     setGameStarted(false);
@@ -279,6 +233,7 @@ export const GameProvider = ({ children }) => {
     socket.emit('resetGame', roomID);
   }
 
+  // LIST OF STATE AND FXN PROPS ///////////
   const contextValue = {
     socket,
     userName,
@@ -310,6 +265,7 @@ export const GameProvider = ({ children }) => {
     nextTurn,
     turnNumber,
     checkTurn,
+    handleSetTurnNumber,
     voted,
     handleVoted,
     myVote,
@@ -318,7 +274,6 @@ export const GameProvider = ({ children }) => {
     ready,
     handleReady,
     resetGame,
-    // other function declarations...
   };
   
   return (

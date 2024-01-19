@@ -7,6 +7,7 @@ function Voting({onNextStep}) {
   const { socket, board, order, cluesList, voted, handleVoted, myVote, handleSetMostVoted, } = useGameContext();
 
   const handleVoteButtonClick = (index) => {
+    console.log("vote button clicked");
     handleVoted(order[index].userName);
     console.log("you voted for :", order[index].userName);
   }
@@ -14,6 +15,7 @@ function Voting({onNextStep}) {
   useEffect(() => {
         
     socket.on('revealAnswer', (mostVoted) => {
+      console.log("revealing answer");
         handleSetMostVoted(mostVoted);
         onNextStep();
      });
