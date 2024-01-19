@@ -20,7 +20,7 @@ export const GameProvider = ({ children }) => {
   const handleConnect = () => {
     return new Promise((resolve, reject) => {
       try {
-        const newSocket = io('http://localhost:3001');
+        const newSocket = io('https://woolf-game-test-b5725a7e8c1f.herokuapp.com/');
 
         // Listen for successful connection
         newSocket.on('connect', () => {
