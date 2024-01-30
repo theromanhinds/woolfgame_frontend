@@ -17,11 +17,13 @@ export const GameProvider = ({ children }) => {
   const [woolf, setWoolf] = useState('');
   const [topic, setTopic] = useState('');
   const [answer, setAnswer] = useState('');
+  const [currentTurn, setCurrentTurn] = useState('');
   const [clue, setClue] = useState('');
   const [myVote, setMyVote] = useState('');
   const [mostVoted, setMostVoted] = useState('');
 
   const [turnNumber, setTurnNumber] = useState(0);
+  const [gameOverLength, setGameOverLength] = useState(0);
 
   const [isHost, setIsHost] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
@@ -32,6 +34,7 @@ export const GameProvider = ({ children }) => {
   const [lobby, setLobby] = useState([]);
   const [board, setBoard] = useState([]);
   const [order, setOrder] = useState([]);
+  const [clueOrder, setClueOrder] = useState([]);
   const [cluesList, setCluesList] = useState([]);
 
   // STATE HANDLERS //////////////////////////
@@ -43,6 +46,7 @@ export const GameProvider = ({ children }) => {
 
   const handleSetTurnNumber = (newTurnNumber) => { setTurnNumber(newTurnNumber) };
   const handleSetYourTurn = (boolean) => { setYourTurn(boolean); };
+  const handleSetCurrentTurn = (turnNumber) => { setCurrentTurn(order[turnNumber].userName); };
 
   const handleSetClue = (newClue) => { setClue(newClue); };
   const handleNewClue = (newClue) => { setCluesList((prevClues) => [...prevClues, newClue]); };
@@ -63,7 +67,6 @@ export const GameProvider = ({ children }) => {
         // Listen for successful connection
         newSocket.on('connect', () => {
           setSocket(newSocket);
-          console.log('Connection successful');
           resolve(newSocket); // Resolve with the socket instance
         });
 
@@ -111,27 +114,23 @@ export const GameProvider = ({ children }) => {
   const handleJoinRoom = async () => {
 
     try {
-      console.log("trying to connect to server");
       const newSocket = await handleConnect();
       
       try {
-        console.log("trying to join room");
         const response = await new Promise((resolve, reject) => {
-          newSocket.emit('checkRoomExistence', roomID, (exists) => {
+          newSocket.emit('verifyJoinRoom', roomID, (exists) => {
             resolve(exists);
           });
         });
         
         if (response) {
           // Room exists, join it
-          console.log("room exists, joining");
           setIsHost(false);
-          console.log("socket emitting is: ", newSocket);
           newSocket.emit('joinRoom', roomID, userName);
           navigate(`/game/${roomID}`);
         } else {
-          console.error('Please enter a valid room ID.');
-          alert('Please Enter Valid Room Code.');
+          console.error('Room ID Invalid or Lobby Full.');
+          alert('Room ID Invalid or Lobby Full.');
         }
       } catch (error) {
         console.error('Error checking room existence:', error);
@@ -154,6 +153,12 @@ export const GameProvider = ({ children }) => {
     setAnswer(newGameData.answer);
     setOrder(newGameData.players);
 
+    setClueOrder(newGameData.players);
+
+    const gameOver = newGameData.players;
+
+    setGameOverLength(gameOver.length);
+
     for(var obj of newGameData.players) {
       if (obj.id === socket.id) {
         setRole(obj.role);
@@ -165,11 +170,22 @@ export const GameProvider = ({ children }) => {
 
   };
 
+  // HANDLE REMOVE PLAYER //////////////////////////
+  
+  const handleRemovePlayer = (newLobby, playerName) => {
+
+    handleSetLobby(newLobby);
+    alert(`${playerName} disconnected! Returning to lobby.`);
+    resetGame();
+    socket.emit("")
+
+  };
+
   
   // HANDLE CLUE SUBMIT //////////////////////////
   const handleClueSubmit = (clue) => {
     let submission = `${userName} says: ${clue}`;
-    socket.emit("clueSubmitted", submission, roomID);
+    socket.emit("clueSubmitted", submission, userName, roomID);
     nextTurn();
   };
 
@@ -179,26 +195,24 @@ export const GameProvider = ({ children }) => {
     // Increment turn number and emit the update to all clients
     const newTurnNumber = turnNumber + 1;
 
-    if (newTurnNumber === order.length) {
-      console.log("game over");
+    if (newTurnNumber === gameOverLength) {
       socket.emit('allTurnsComplete', roomID);
     } else {
-      console.log("game NOT over");
       socket.emit('incrementTurn', newTurnNumber, roomID);
       setTurnNumber(newTurnNumber);
-      checkTurn(newTurnNumber);
     }
 
   };
 
   const checkTurn = (turnCount) => {
-      if (socket.id === order[turnCount].id) {
-        console.log("it is your turn");
-        handleSetYourTurn(true);
-      } else {
-        console.log("it's NOT your turn");
-        handleSetYourTurn(false);
-      }
+
+    handleSetCurrentTurn(turnCount);
+
+    if (socket.id === order[turnCount].id) {
+      handleSetYourTurn(true);
+    } else {
+      handleSetYourTurn(false);
+    }
   };
   
   // HANDLE VOTE //////////////////////////
@@ -224,6 +238,8 @@ export const GameProvider = ({ children }) => {
     setTopic('');
     setAnswer('');
     setOrder([]);
+    setClueOrder([]);
+    setCurrentTurn('');
     setCluesList([]);
     setTurnNumber(0);
     setVoted(false);
@@ -236,6 +252,7 @@ export const GameProvider = ({ children }) => {
   // LIST OF STATE AND FXN PROPS ///////////
   const contextValue = {
     socket,
+    setSocket,
     userName,
     roomID,
     handleNameUpdate,
@@ -254,7 +271,8 @@ export const GameProvider = ({ children }) => {
     board,
     topic,
     answer,
-    order, 
+    order,
+    clueOrder,
     clue,
     handleSetClue,
     resetClue,
@@ -262,6 +280,9 @@ export const GameProvider = ({ children }) => {
     handleClueSubmit,
     handleNewClue,
     yourTurn,
+    currentTurn,
+    setCurrentTurn,
+    handleSetCurrentTurn,
     nextTurn,
     turnNumber,
     checkTurn,
@@ -274,6 +295,7 @@ export const GameProvider = ({ children }) => {
     ready,
     handleReady,
     resetGame,
+    handleRemovePlayer,
   };
   
   return (

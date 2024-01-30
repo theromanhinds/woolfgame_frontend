@@ -2,9 +2,12 @@ import React from 'react';
 import { useGameContext } from '../GameContext';
 import { useEffect } from 'react';
 
-function ClueBox({onNextStep}) {
+function ClueBox({onNextStep, resetStep}) {
 
-    const { socket, clue, cluesList, handleSetClue, handleClueSubmit, handleNewClue, resetClue, yourTurn, turnNumber, handleSetTurnNumber, checkTurn } = useGameContext();
+    const { socket, lobby, handleSetIsHost, order,
+      clue, cluesList, handleSetClue, handleClueSubmit, handleNewClue, 
+      resetClue, yourTurn, turnNumber, handleSetTurnNumber, checkTurn, 
+      currentTurn, setCurrentTurn, handleRemovePlayer } = useGameContext();
 
     const handleClueChange = (event) => { handleSetClue(event.target.value); };
 
@@ -13,27 +16,51 @@ function ClueBox({onNextStep}) {
         if (clue) {
             if (clue.trim() !== '') {
             handleClueSubmit(clue);
-            resetClue(); // Clear the input after submitting
+            resetClue();
             }
         }
     }
 
-    // //check for your turn at start of game
+    //check for your turn at start of game
     useEffect(() => {
-        checkTurn(turnNumber);
-
+        checkTurn(turnNumber, order);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+
     useEffect(() => {
-        // Subscribe to socket events
-          socket.on('updateTurn', (newTurnNumber) => {
-            console.log("setting turn num: ", newTurnNumber);
+      socket.on('playerDisconnected', (newRoomData, playerName, playerID) => {
+          try {
+              handleRemovePlayer(newRoomData, playerName);
+              resetStep();
+          } catch (error) {
+              console.error('Error processing disconnect event:', error);
+          }
+      });
+
+      if (lobby.length > 0){
+          const hostPlayer = lobby.find(player => player.host === true);
+          if (hostPlayer.id === socket.id) {
+              handleSetIsHost(true);
+          } else {
+              handleSetIsHost(false);
+          }
+      }
+
+      return () => {
+        socket.off('playerDisconnected');
+    };
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lobby]);
+    
+
+    useEffect(() => {
+          socket.on('updateTurn', (newTurnNumber, currentOrder) => {
             handleSetTurnNumber(newTurnNumber);
-            checkTurn(newTurnNumber);
+            checkTurn(newTurnNumber, currentOrder);
           });
         
-        // Clean up subscriptions on component unmount
         return () => {
             socket.off('updateTurn');
         };
@@ -41,17 +68,14 @@ function ClueBox({onNextStep}) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
     
-    
     //only called for receivers of a clue
     useEffect(() => {
         socket.on('newClue', (newClue) => {
-            console.log("new clue rec"); 
             handleNewClue(newClue);
-            // nextTurn(); 
         });
 
         return () => {
-            socket.off('newClue');  // Clean up any subscriptions or side effects when the component unmounts
+            socket.off('newClue'); 
         };
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,7 +84,7 @@ function ClueBox({onNextStep}) {
       useEffect(() => {
         
         socket.on('startVoting', () => {
-            console.log("starting the voting");
+            setCurrentTurn('');
             onNextStep();
          });
                            
@@ -71,13 +95,12 @@ function ClueBox({onNextStep}) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
-
   return (
     <div className='ClueBoxContainer'>
         <div className='ClueBox'>
         
         <h2 className='ClueText'>CLUES</h2>
-        <p className='TurnIndicator'>{yourTurn ? "It's YOUR turn!" : "It's NOT your turn!"}</p>
+        <p className='TurnIndicator'>{yourTurn ? "It's YOUR turn!" : `${currentTurn} is typing a clue.`}</p>
             <ul> {cluesList.map((submittedClue, index) => (
                 <li key={index}>{submittedClue}</li>
                 ))}

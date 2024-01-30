@@ -5,43 +5,57 @@ import { useGameContext } from '../GameContext';
 
 function Lobby({onNextStep}) {
 
-    const { socket, roomID, lobby, handleSetLobby, isHost, handleSetIsHost, handleGameStartRequest, handleGameStarted } = useGameContext();
+    const { socket, setSocket, roomID, lobby, handleSetLobby, isHost, handleSetIsHost, handleGameStartRequest, handleGameStarted } = useGameContext();
+
+    const handleReturnButtonClick = () => {
+        setSocket(null);
+    }
 
     const handleStartButtonClick = () => {
 
-        //RESET TO 3
         if (lobby.length >= 3){
             handleGameStartRequest();
         } else {
-            alert("Need atleast 3 players");
-            console.log("not enough players to start");
+            alert("Need at least 3 players to start!");
         }
 
-    }  
-
-    useEffect(() => {
-      socket.emit('getRoom', roomID);
+    }
     
-      return () => {
-        socket.off('getRoom');
-      }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
     
-
-    //GET LOBBY TO UPDATE
     // Listen for updates to the lobby
     useEffect(() => {
-        socket.on('updateRoom', (newRoomData) => {
+        
+            socket.on('updateRoom', (newRoomData) => {
+                try {
+                    handleSetLobby(newRoomData);
+                } catch (error) {
+                    console.error('Error processing initialPlayerList event:', error);
+                }
+            });
+        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [lobby]);
+
+      //NEED TO UNDERSTAND WHY THIS FUNCTION IS NEEDED
+      useEffect(() => {
+        socket.emit('getRoom', roomID);
+      
+        return () => {
+          socket.off('getRoom');
+        }
+  
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [])
+
+    useEffect(() => {
+        socket.on('playerDisconnected', (newRoomData) => {
             try {
                 handleSetLobby(newRoomData);
             } catch (error) {
-                console.error('Error processing initialPlayerList event:', error);
+                console.error('Error processing disconnect event:', error);
             }
         });
 
-        //confirm host in new lobby
         if (lobby.length > 0){
             const hostPlayer = lobby.find(player => player.host === true);
             if (hostPlayer.id === socket.id) {
@@ -52,21 +66,20 @@ function Lobby({onNextStep}) {
         }
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [lobby]);
+    }, [lobby]);
+    
 
       // Listen for game start
-    useEffect(() => {
-        
+    useEffect(() => {    
         socket.on('gameStarted', (gameData) => {
             handleGameStarted(gameData);
             onNextStep();
-         });
-                           
+            });
+                            
         return () => {
-          socket.off('gameStarted');  // Clean up any subscriptions or side effects when the component unmounts
+            socket.off('gameStarted'); 
         };
-      });
-      
+    });
       
     return (
         <div className='LobbyContainer'>
@@ -77,6 +90,7 @@ function Lobby({onNextStep}) {
             ))}
             </ul>
             {isHost ? (<button className='GameButton' onClick={handleStartButtonClick}>START</button>) : (<h3 className='GameButton'>WAITING FOR HOST...</h3>)}
+            <button onClick={handleReturnButtonClick} className='ReturnButton'>RETURN</button>
         </div>
     )
 }

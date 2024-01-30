@@ -34,6 +34,7 @@
 }
 
 .StartText {
+  
   font-style: italic;
 }
 
@@ -45,6 +46,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+
 }
 
 .StartInput {
@@ -71,7 +73,7 @@
   bottom: 10%;
   font-style: italic;
   font-weight: bold;
-  width: auto;
+  width: 50%;
   padding: 1em;
   font-size: 1.5em;
 }
@@ -82,7 +84,7 @@
   bottom: 45%;
   font-style: italic;
   font-weight: bold;
-  width: auto;
+  width: 50%;
   padding: 1em;
   font-size: 1.5em;
 }
@@ -93,7 +95,7 @@
   bottom: 33%;
   font-style: italic;
   font-weight: bold;
-  width: auto;
+  width: 50%;
   padding: 1em;
   font-size: 1.5em;
 }
@@ -130,12 +132,23 @@
 .GameButton {
   font-style: italic;
   font-weight: bold;
-  width: auto;
+  width: 50%;
   padding: 1em;
   font-size: 1.5em;
   position: fixed;
   background-color: #F7F3F0;
-  bottom: 10%;
+  bottom: 18%;
+}
+
+.ReturnButton {
+  font-style: italic;
+  font-weight: bold;
+  width: 50%;
+  padding: 1em;
+  font-size: 1.5em;
+  position: fixed;
+  background-color: #F7F3F0;
+  bottom: 6%;
 }
 
 .LobbyButton {
@@ -321,9 +334,10 @@
   text-align: center;
   list-style-position: outside;
   list-style-type: square;
-  font-size: large;
+  font-size: medium;
   position: fixed;
-  bottom: 4%;
+  bottom: 3%;
+  line-height: 9px;
 }
 
 .TurnIndicator {
@@ -365,9 +379,36 @@
   font-style: italic;
   font-weight: bold;
   background-color: #F7F3F0;
-  width: auto;
+  width: 50%;
   padding: 1em;
   font-size: 1.5em;
 
   margin-top: 20px;
+}
+
+/*///////////////////*/
+
+.popup {
+  display: flex;
+  position: fixed;
+  height: 70%;
+  width: 70%;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white; /* Ensure this is a solid color */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  
 }

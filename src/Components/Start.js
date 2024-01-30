@@ -11,9 +11,7 @@ function Start() {
 
     const [currentStep, setCurrentStep] = useState(1);
 
-    const handleNextStep = () => {
-        setCurrentStep((prevStep) => prevStep + 1);
-    };
+    const handleNextStep = () => { setCurrentStep((prevStep) => prevStep + 1); };
 
   return (
     <div className='StartContainer'>
